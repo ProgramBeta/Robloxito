@@ -1,0 +1,144 @@
+<!DOCTYPE html> 
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>¿Vuelves a jugar robloxito conmigo?</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      margin: 0;
+      overflow: hidden;
+      height: 100vh;
+      background-color: #ffe4f2;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      color: #ff4d88;
+      margin-top: 60px;
+      z-index: 2;
+      position: relative;
+    }
+
+    .buttons {
+      margin-top: 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    button {
+      font-size: 20px;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+      position: relative;
+    }
+
+    #yesBtn {
+      background-color: #4CAF50;
+      color: white;
+      transform: scale(1);
+    }
+
+    #noBtn {
+      background-color: #f44336;
+      color: white;
+      margin-left: 30px;
+      transform: scale(1);
+    }
+
+    .heart {
+      position: fixed;
+      top: -50px;
+      z-index: 1;
+      animation: fall linear infinite;
+      pointer-events: none;
+      opacity: 0.8;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(0); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(110vh); opacity: 0; }
+    }
+
+    .hello-kitty {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      width: 100px;
+      z-index: 0;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Amikita jugamos robloxito? 🥺</h1>
+
+  <div class="buttons">
+    <button id="yesBtn">Sí</button>
+    <button id="noBtn">No</button>
+  </div>
+
+  <img class="hello-kitty" src="https://i.ibb.co/r29Tvss3/9EJ0njw.gif" alt="Hello Kitty linda">
+
+  <script>
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+
+    let clickCount = 0;
+    const maxTries = 15;
+
+    noBtn.addEventListener("mouseenter", () => {
+      clickCount++;
+
+      // Hacer más grande el botón SÍ
+      const currentScaleYes = parseFloat(yesBtn.style.transform.replace(/[^0-9.]/g, "")) || 1;
+      yesBtn.style.transform = `scale(${currentScaleYes + 0.1})`;
+
+      // Hacer más pequeño el NO
+      const newScaleNo = 1 - (clickCount * 0.05);
+      noBtn.style.transform = `scale(${newScaleNo})`;
+
+      if (clickCount >= maxTries) {
+        noBtn.style.display = "none";
+        return;
+      }
+
+      // Mover el NO a posición aleatoria dentro de la ventana
+      const maxX = window.innerWidth - noBtn.offsetWidth;
+      const maxY = window.innerHeight - noBtn.offsetHeight;
+
+      const randomX = Math.random() * maxX;
+      const randomY = Math.random() * (maxY - 100) + 50;
+
+      noBtn.style.position = "fixed";
+      noBtn.style.left = `${randomX}px`;
+      noBtn.style.top = `${randomY}px`;
+    });
+
+    yesBtn.addEventListener("click", () => {
+      window.location.href = "https://www.roblox.com/es/games/92171645661524/Carry-an-Egg-2-Player-Obby";
+    });
+
+    // Corazones flotantes
+    const heartEmojis = ["🩷", "💗", "💞"];
+    const totalHearts = 30;
+
+    for (let i = 0; i < totalHearts; i++) {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.innerText = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+      heart.style.left = `${Math.random() * 100}%`;
+      heart.style.fontSize = `${Math.random() * 25 + 20}px`;
+      heart.style.animationDuration = `${Math.random() * 5 + 6}s`;
+      heart.style.animationDelay = `${Math.random() * 5}s`;
+      document.body.appendChild(heart);
+    }
+  </script>
+</body>
+</html>
