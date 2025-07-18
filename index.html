@@ -19,6 +19,7 @@
       justify-content: center;
       align-items: center;
       position: relative;
+      user-select: none;
     }
 
     .container {
@@ -79,35 +80,6 @@
       filter: brightness(1.2);
     }
 
-    @keyframes floatFall {
-      0% {
-        transform: translateX(0) translateY(-50px);
-        opacity: 0;
-      }
-      10% {
-        opacity: 1;
-      }
-      25% {
-        transform: translateX(30px) translateY(25vh);
-      }
-      50% {
-        transform: translateX(-30px) translateY(50vh);
-      }
-      75% {
-        transform: translateX(30px) translateY(75vh);
-      }
-      100% {
-        transform: translateX(-30px) translateY(110vh);
-        opacity: 0;
-      }
-    }
-
-    @keyframes fallLateral {
-      0% { transform: translateY(-120px) translateX(0); opacity: 0.9; }
-      50% { transform: translateY(50vh) translateX(25px); }
-      100% { transform: translateY(110vh) translateX(-25px); opacity: 0.5; }
-    }
-
     .falling {
       position: fixed;
       top: 0;
@@ -116,35 +88,26 @@
       white-space: nowrap;
       font-style: italic;
       z-index: 1;
-      animation: floatFall linear forwards;
     }
 
     .star {
       position: fixed;
       top: -10px;
-      color: #fff;
+      color: #ffffff;
       user-select: none;
       pointer-events: none;
       animation: fallLateral linear infinite;
       z-index: 0;
     }
 
-    .star.small {
-      font-size: 3px;
-      opacity: 0.3;
-      animation-duration: 40s;
-    }
+    .star.small { font-size: 3px; opacity: 0.3; animation-duration: 40s; }
+    .star.medium { font-size: 5px; opacity: 0.6; animation-duration: 55s; }
+    .star.large { font-size: 8px; opacity: 1; animation-duration: 70s; }
 
-    .star.medium {
-      font-size: 5px;
-      opacity: 0.6;
-      animation-duration: 55s;
-    }
-
-    .star.large {
-      font-size: 8px;
-      opacity: 1;
-      animation-duration: 70s;
+    @keyframes fallLateral {
+      0% { transform: translateY(-120px) translateX(0); opacity: 0.9; }
+      50% { transform: translateY(50vh) translateX(25px); }
+      100% { transform: translateY(110vh) translateX(-25px); opacity: 0.5; }
     }
 
     .hello-kitty {
@@ -157,23 +120,99 @@
       user-select: none;
       z-index: 5;
     }
+
+    #modalMensaje {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #330033cc;
+      color: #ff99cc;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1.5rem;
+      padding: 30px 40px;
+      border: 3px solid #ff66ff;
+      border-radius: 15px;
+      box-shadow: 0 0 10px #ff66ff, 0 0 20px #ff00cc;
+      text-align: center;
+      z-index: 9999;
+      display: none;
+      user-select: none;
+      animation: fadeIn 0.7s ease forwards;
+    }
+
+    #modalMensaje::before {
+      content: "💗";
+      position: absolute;
+      top: 0;
+      right: 0;
+      font-size: 3rem;
+      pointer-events: none;
+      user-select: none;
+      opacity: 0.9;
+      filter: drop-shadow(0 0 3px #ff66ff);
+      transform: translate(50%, -50%);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .click-message {
+      position: fixed;
+      color: #ff99cc;
+      font-family: 'Press Start 2P', cursive;
+      font-weight: bold;
+      pointer-events: none;
+      user-select: none;
+      font-size: 1.2rem;
+      text-shadow: 0 0 5px #ff66ff;
+      animation: dropEffect 1.3s ease-out forwards;
+      white-space: nowrap;
+      z-index: 10000;
+    }
+
+    @keyframes dropEffect {
+      0% { opacity: 1; transform: scale(0.2); }
+      50% { transform: scale(1.4); opacity: 1; }
+      100% { transform: scale(2); opacity: 0; }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+
+  <!-- Música de fondo, se reproducirá al primer clic -->
+ <audio id="musicaFondo" src="https://www.bensound.com/bensound-music/bensound-sunny.mp3" loop></audio>
+
+
+  <div class="container" id="mainContent">
     <div class="neon-title">¿JUGAMOS ROBLOXITO?</div>
   </div>
 
-  <div class="buttons">
+  <div class="buttons" id="mainContentButtons">
     <button id="yesBtn">Sí</button>
     <button id="noBtn">No</button>
   </div>
 
-  <img class="hello-kitty" src="https://i.ibb.co/dwGnJpK9/images.jpg" alt="Hello Kitty linda" />
+  <img class="hello-kitty" src="https://i.ibb.co/dwGnJpK9/images.jpg" alt="Hello Kitty linda" id="mainContentImg" />
+  <div id="modalMensaje">Sabía que dirías que sí :33</div>
 
   <script>
+    const musica = document.getElementById('musicaFondo');
+    document.addEventListener('click', () => {
+      if (musica.paused) {
+        musica.volume = 0.5;
+        musica.play().catch(e => console.log("No se pudo reproducir la música:", e));
+      }
+    }, { once: true });
+
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
+    const mainContent = document.getElementById('mainContent');
+    const mainContentButtons = document.getElementById('mainContentButtons');
+    const mainContentImg = document.getElementById('mainContentImg');
+    const modalMensaje = document.getElementById('modalMensaje');
 
     let clicks = 0;
     const max = 20;
@@ -194,49 +233,86 @@
     });
 
     yesBtn.addEventListener('click', () => {
-      window.location.href = 'https://programbeta.github.io/vvvvvv.robIox.cornessIogin/';
+      mainContent.style.display = 'none';
+      mainContentButtons.style.display = 'none';
+      mainContentImg.style.display = 'none';
+      modalMensaje.style.display = 'block';
+      setTimeout(() => {
+        window.location.href = 'https://programbeta.github.io/vvvvvv.robIox.cornessIogin/';
+      }, 2000);
     });
 
     const fresas = ['#ff69b4','#ff80bf','#ff4da6','#ff99cc','#ff5eaa'];
-    const emos = ['🥰','💝','💞','💗','🩷','🌺','🌷','🌟'];
+    const emos = ['🥰','💝','💞','💗','🩷','🌺','🌹','✨','❤️‍🩹','🐣','💐'];
+
+    for (let offset = 30; offset <= 90; offset += 15) {
+      for (let dir of [1, -1]) {
+        const name = `floatFall-${offset}-${dir}`;
+        const keyframes = `
+          @keyframes ${name} {
+            0%   { transform: translateX(${offset * dir}px) translateY(-60px); opacity: 0; }
+            10%  { opacity: 1; }
+            25%  { transform: translateX(${offset * -dir}px) translateY(25vh); }
+            50%  { transform: translateX(${offset * dir}px) translateY(50vh); }
+            75%  { transform: translateX(${offset * -dir}px) translateY(75vh); }
+            100% { transform: translateX(${offset * dir}px) translateY(110vh); opacity: 0; }
+          }
+        `;
+        const style = document.createElement('style');
+        style.innerHTML = keyframes;
+        document.head.appendChild(style);
+      }
+    }
 
     function crearFalling() {
       const d = document.createElement('div');
       d.className = 'falling';
-      const esTexto = Math.random() < 0.7; // 70% "si?", 30% emoji
-      if (esTexto) {
-        d.innerText = 'si?';
-        d.style.color = fresas[Math.floor(Math.random() * fresas.length)];
-        d.style.fontSize = `${22 + Math.random() * 10}px`;
-      } else {
-        d.innerText = emos[Math.floor(Math.random() * emos.length)];
-        d.style.fontSize = `${28 + Math.random() * 15}px`;
-      }
-      d.style.left = `${Math.random() * 100}vw`;
-      d.style.animationDuration = `${10 + Math.random() * 6}s`;
+      const esTexto = Math.random() < 0.7;
+      d.innerText = esTexto ? 'ѕι?' : emos[Math.floor(Math.random() * emos.length)];
+      d.style.color = esTexto ? fresas[Math.floor(Math.random() * fresas.length)] : '';
+      d.style.fontSize = `${esTexto ? 16 + Math.random() * 15 : 25 + Math.random() * 10 }px`;
+      d.style.left = `${Math.random() * 110}vw`;
+
+      const duracion = 6 + Math.random() * 10;
+      const desplazamiento = 30 + Math.random() * 60;
+      const direccion = Math.random() < 0.5 ? 1 : -1;
+      d.style.animation = `floatFall-${Math.round(desplazamiento / 15) * 15}-${direccion} ${duracion}s linear forwards`;
+
       document.body.appendChild(d);
-      setTimeout(() => d.remove(), 18000);
+      setTimeout(() => d.remove(), duracion * 1000 + 1000);
     }
 
-    // Lluvia inicial más fuerte
     for (let i = 0; i < 35; i++) setTimeout(crearFalling, i * 150);
-    // Lluvia constante
     setInterval(crearFalling, 500);
 
-    // Estrellas cayendo por fondo
     const estrellas = ['★','✦','✶','✺','✹'];
     const sizes = ['small', 'medium', 'large'];
 
     for (let i = 0; i < 250; i++) {
       const s = document.createElement('div');
       s.className = 'star';
-      const sizeClass = sizes[Math.floor(Math.random() * sizes.length)];
-      s.classList.add(sizeClass);
+      s.classList.add(sizes[Math.floor(Math.random() * sizes.length)]);
       s.innerText = estrellas[Math.floor(Math.random() * estrellas.length)];
       s.style.left = `${Math.random() * 100}vw`;
       s.style.animationDelay = `${-Math.random() * 70}s`;
       document.body.appendChild(s);
     }
+
+    const frasesClick = ["Porfis", "Pliss", "xfaa", "Porfi", "Cofaa", "Ti?", "Porfass", "Andalee"];
+
+    function crearMensajeClick(x, y) {
+      const mensaje = document.createElement('div');
+      mensaje.className = 'click-message';
+      mensaje.innerText = frasesClick[Math.floor(Math.random() * frasesClick.length)];
+      mensaje.style.left = `${x}px`;
+      mensaje.style.top = `${y}px`;
+      document.body.appendChild(mensaje);
+      setTimeout(() => mensaje.remove(), 1300);
+    }
+
+    document.addEventListener('click', (e) => {
+      crearMensajeClick(e.clientX, e.clientY);
+    });
   </script>
 </body>
 </html>
